@@ -1,0 +1,6 @@
+Flask
+pandas
+requests
+# nsepy # Removing nsepy as it seems unreliable
+yfinance # Using yfinance for index data
+Flask-Cors # To handle Cross-Origin Resource Sharing for the React frontend 
