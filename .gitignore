@@ -5,7 +5,6 @@ __pycache__/
 *.so
 .Python
 env/
-build/
 develop-eggs/
 dist/
 downloads/
@@ -34,7 +33,6 @@ yarn-error.log*
 .env.production.local
 .next/
 out/
-build/
 .DS_Store
 *.pem
 
