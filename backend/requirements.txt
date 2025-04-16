@@ -2,7 +2,7 @@ Flask==2.0.1
 Flask-CORS==3.0.10
 Werkzeug==2.0.3
 yfinance==0.2.36
-pandas==1.4.2
+pandas==2.2.2
 gunicorn==20.1.0
 numpy==1.22.0 
 # nsepy # Removing nsepy as it seems unreliable 
