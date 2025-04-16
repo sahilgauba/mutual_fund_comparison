@@ -112,7 +112,6 @@ def fetch_index_data(index_symbol, start_date, end_date):
         # Ensure we are selecting the 'Close' column correctly
         if 'Close' not in data.columns:
             print(f"Error: 'Close' column not found in yfinance data for {index_symbol}. Columns: {data.columns}")
-            # Return an error or None, as we can't proceed
             return ValueError(f"'Close' column missing in yfinance data for {index_symbol}") 
         
         # Select the 'Close' column Series
