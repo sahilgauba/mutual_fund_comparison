@@ -1,86 +1,71 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import axios from 'axios';
-import { Autocomplete, TextField, CircularProgress, Box } from '@mui/material';
-import debounce from 'lodash/debounce';
-
-const API_URL = 'http://127.0.0.1:5001/api'; // Your Flask backend URL
+import React, { useState } from 'react';
+import { Autocomplete, TextField, Box, CircularProgress } from '@mui/material';
+import { searchFunds, POPULAR_FUNDS } from '../utils/fundList';
 
 const FundSelector = ({ selectedFund, onFundChange }) => {
   const [open, setOpen] = useState(false);
-  const [options, setOptions] = useState([]);
+  const [options, setOptions] = useState(POPULAR_FUNDS);
   const [loading, setLoading] = useState(false);
   const [inputValue, setInputValue] = useState('');
-  const [error, setError] = useState(null);
 
-  // Debounced search function
-  const debouncedSearch = useMemo(
-    () =>
-      debounce(async (searchQuery) => {
-        if (!searchQuery) {
-          setOptions([]);
-          setLoading(false);
-          return;
-        }
+  // Debounce search
+  const debounce = (func, wait) => {
+    let timeout;
+    return (...args) => {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => func.apply(this, args), wait);
+    };
+  };
 
-        setLoading(true);
-        setError(null);
+  // Handle search
+  const handleSearch = async (query) => {
+    if (!query || query.length < 3) {
+      setOptions(POPULAR_FUNDS);
+      return;
+    }
 
-        try {
-          const response = await axios.get(`${API_URL}/funds/search`, {
-            params: { q: searchQuery }
-          });
-          setOptions(response.data || []);
-        } catch (err) {
-          console.error("Error searching funds:", err);
-          setError('Failed to search funds');
-          setOptions([]);
-        } finally {
-          setLoading(false);
-        }
-      }, 300), // 300ms delay
+    setLoading(true);
+    try {
+      const results = await searchFunds(query);
+      setOptions(results);
+    } catch (error) {
+      console.error('Error searching funds:', error);
+      setOptions(POPULAR_FUNDS);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Debounced search
+  const debouncedSearch = React.useCallback(
+    debounce(handleSearch, 300),
     []
   );
-
-  // Cleanup debounce on unmount
-  useEffect(() => {
-    return () => {
-      debouncedSearch.cancel();
-    };
-  }, [debouncedSearch]);
 
   return (
     <Autocomplete
       id="fund-selector"
-      sx={{ 
-        width: { xs: '100%', sm: 450 }, // Responsive width
-        mb: 2,
-        '& .MuiOutlinedInput-root': { // Add slight elevation/shadow
-            boxShadow: '0 1px 2px rgba(0,0,0,0.05)',
-        }
-      }}
       open={open}
       onOpen={() => setOpen(true)}
       onClose={() => setOpen(false)}
-      isOptionEqualToValue={(option, value) => option.schemeCode === value.schemeCode}
-      getOptionLabel={(option) => option.schemeName || ''}
-      options={options}
-      loading={loading}
       value={selectedFund}
       onChange={(event, newValue) => {
         onFundChange(newValue);
       }}
+      inputValue={inputValue}
       onInputChange={(event, newInputValue) => {
         setInputValue(newInputValue);
         debouncedSearch(newInputValue);
       }}
-      filterOptions={(x) => x} // Disable built-in filtering as we're using server-side search
+      options={options}
+      getOptionLabel={(option) => option.schemeName || ''}
+      isOptionEqualToValue={(option, value) => option.schemeCode === value.schemeCode}
+      loading={loading}
+      filterOptions={(x) => x}
       renderInput={(params) => (
         <TextField
           {...params}
-          label="Search Mutual Fund"
-          placeholder="Start typing fund name or scheme code..."
-          error={!!error}
-          helperText={error || "Type at least 3 characters to search"}
+          label="Select Mutual Fund"
           InputProps={{
             ...params.InputProps,
             endAdornment: (

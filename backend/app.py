@@ -3,13 +3,28 @@ from flask_cors import CORS
 from datetime import datetime
 import pandas as pd
 import requests
+import yfinance as yf
+import os
 
 # Import utility functions and lists
 from utils import fetch_fund_data, fetch_index_data, calculate_performance, ALL_FUNDS, INDICES
 
 app = Flask(__name__)
-# Enable CORS for requests from the frontend (adjust origin in production)
-CORS(app, resources={r"/api/*": {"origins": "http://localhost:3000"}}) 
+
+# Configure CORS based on environment
+if os.environ.get('FLASK_ENV') == 'production':
+    # In production, only allow requests from your frontend domain
+    CORS(app, resources={r"/api/*": {
+        "origins": [
+            "http://localhost:3000",  # For local testing
+            "https://your-frontend-domain.com"  # Replace with your actual frontend domain
+        ],
+        "methods": ["GET", "POST", "OPTIONS"],
+        "allow_headers": ["Content-Type"]
+    }})
+else:
+    # In development, allow all origins
+    CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 @app.route('/api/funds', methods=['GET'])
 def get_funds():
@@ -127,6 +142,39 @@ def search_funds():
     except requests.RequestException as e:
         return jsonify({"error": f"Failed to fetch search results: {str(e)}"}), 500
 
+@app.route('/api/index-data', methods=['GET'])
+def get_index_data():
+    try:
+        symbol = request.args.get('symbol')
+        start_date = request.args.get('start_date')
+        end_date = request.args.get('end_date')
+
+        if not all([symbol, start_date, end_date]):
+            return jsonify({'error': 'Missing required parameters'}), 400
+
+        # Fetch data using yfinance
+        ticker = yf.Ticker(symbol)
+        df = ticker.history(start=start_date, end=end_date)
+
+        if df.empty:
+            return jsonify({'error': 'No data available for the specified range'}), 404
+
+        # Convert data to list of dictionaries
+        data = []
+        for index, row in df.iterrows():
+            data.append({
+                'date': index.strftime('%Y-%m-%d'),
+                'close': float(row['Close'])
+            })
+
+        return jsonify(data)
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 if __name__ == '__main__':
-    # Use port 5001 to avoid conflicts with React's default port 3000
-    app.run(debug=True, port=5001) 
+    # Get port from environment variable or default to 5001
+    port = int(os.environ.get('PORT', 5001))
+    # In production, listen on all interfaces
+    host = '0.0.0.0' if os.environ.get('FLASK_ENV') == 'production' else 'localhost'
+    app.run(host=host, port=port, debug=os.environ.get('FLASK_ENV') != 'production') 

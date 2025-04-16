@@ -1,73 +1,119 @@
-# Mutual Fund vs Index Performance Analyzer
+# Mutual Fund Analyzer
 
-A local web application to compare the performance of Indian mutual funds against market indices.
+A web application to analyze and compare mutual fund performance with market indices. Built with React frontend and Flask backend.
+
+## Features
+
+- Compare mutual fund performance with market indices
+- Interactive performance charts
+- Customizable date ranges (1M to 10Y)
+- Multiple fund and index selection options
+
+## Prerequisites
+
+Before running the project, ensure you have the following installed:
+- Python 3.7 or higher
+- Node.js 14 or higher
+- npm (comes with Node.js)
 
 ## Project Structure
 
 ```
 mutual_fund_analyzer/
-├── backend/
-│   ├── app.py          # Flask application
-│   ├── utils.py        # Data fetching and processing logic
-│   ├── requirements.txt# Python dependencies
-│   └── ...
-├── frontend/
-│   ├── public/
-│   ├── src/            # React application source
-│   ├── package.json    # Node dependencies
-│   └── ...
-└── README.md
+├── backend/               # Flask server
+│   ├── app.py            # Main server file
+│   ├── utils.py          # Utility functions
+│   └── requirements.txt  # Python dependencies
+│
+└── frontend/             # React application
+    ├── src/
+    │   ├── components/   # React components
+    │   └── App.js        # Main React component
+    └── package.json      # Node.js dependencies
 ```
 
-## Setup and Run
+## Setup Instructions
 
-### Backend (Flask)
+### Backend Setup
 
-1.  Navigate to the `backend` directory:
-    ```bash
-    cd mutual_fund_analyzer/backend
-    ```
-2.  Create a virtual environment (optional but recommended):
-    ```bash
-    python -m venv venv
-    source venv/bin/activate  # On Windows use `venv\Scripts\activate`
-    ```
-3.  Install dependencies:
-    ```bash
-    pip install -r requirements.txt
-    ```
-4.  Run the Flask development server:
-    ```bash
-    python app.py
-    ```
-    The backend will be running at `http://127.0.0.1:5001`.
+1. Navigate to the backend directory:
+```bash
+cd backend
+```
 
-### Frontend (React)
+2. Create and activate a Python virtual environment:
+```bash
+# Windows
+python -m venv venv
+.\venv\Scripts\activate
 
-1.  Navigate to the `frontend` directory:
-    ```bash
-    cd ../frontend
-    ```
-2.  Install dependencies:
-    ```bash
-    npm install
-    # or
-    yarn install
-    ```
-3.  Start the React development server:
-    ```bash
-    npm start
-    # or
-    yarn start
-    ```
-    The frontend will open automatically in your browser, usually at `http://localhost:3000`.
+# Linux/Mac
+python3 -m venv venv
+source venv/bin/activate
+```
 
-## Features
+3. Install dependencies:
+```bash
+pip install -r requirements.txt
+```
 
-*   Select Indian mutual funds (with search).
-*   Select common Indian market indices.
-*   Choose a custom date range or predefined periods (1M, 3M, 6M, 1Y, 3Y, 5Y, MAX).
-*   View an interactive chart comparing normalized performance.
+4. Start the Flask server:
+```bash
+python app.py
+```
+The backend server will run on `http://localhost:5000`
+
+### Frontend Setup
+
+1. Open a new terminal and navigate to the frontend directory:
+```bash
+cd frontend
+```
+
+2. Install dependencies:
+```bash
+npm install
+```
+
+3. Start the development server:
+```bash
+npm start
+```
+The frontend will automatically open in your browser at `http://localhost:3000`
+
+## Dependencies
+
+### Backend Dependencies
+- Flask (2.0.1): Web framework
+- Flask-CORS (3.0.10): Handle Cross-Origin Resource Sharing
+- pandas (1.4.2): Data manipulation
+- yfinance (0.1.70): Fetch market index data
+- requests (2.27.1): HTTP requests
+- python-dotenv (0.19.2): Environment management
+- numpy (1.22.3): Numerical computations
+- gunicorn (20.1.0): Production server
+
+### Frontend Dependencies
+- React (18.1.0): UI framework
+- Material-UI (5.6.3): UI components
+- Chart.js (3.7.1): Charting library
+- date-fns (2.28.0): Date utilities
+- axios (0.27.2): HTTP client
+
+## Usage
+
+1. Start both the backend and frontend servers following the setup instructions above
+2. Select a mutual fund from the dropdown menu
+3. Choose a market index for comparison
+4. Select a date range using either the preset buttons (1M to 10Y) or custom date picker
+5. The performance chart will update automatically to show the comparison
+
+## Notes
+
+- Always start the backend server before the frontend
+- The backend must be running for the frontend to fetch data
+- Make sure both servers are running on their designated ports (5000 for backend, 3000 for frontend)
+- For development purposes, the application uses Flask's development server. For production, consider using gunicorn or a similar production server
 
 ## Data Sources
 
