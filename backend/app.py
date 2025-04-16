@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 from datetime import datetime
 import pandas as pd
@@ -9,7 +9,7 @@ import os
 # Import utility functions and lists
 from utils import fetch_fund_data, fetch_index_data, calculate_performance, ALL_FUNDS, INDICES
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='../frontend/build', static_url_path='')
 
 # Configure CORS based on environment
 if os.environ.get('FLASK_ENV') == 'production':
@@ -25,6 +25,14 @@ if os.environ.get('FLASK_ENV') == 'production':
 else:
     # In development, allow all origins
     CORS(app, resources={r"/api/*": {"origins": "*"}})
+
+@app.route('/')
+def serve_frontend():
+    return send_from_directory(app.static_folder, 'index.html')
+
+@app.route('/<path:path>')
+def serve_static(path):
+    return send_from_directory(app.static_folder, path)
 
 @app.route('/api/funds', methods=['GET'])
 def get_funds():
