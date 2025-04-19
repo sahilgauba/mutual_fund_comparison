@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import axios from 'axios';
 import { Container, CssBaseline, Box, CircularProgress, Alert, Typography, Grid, Button, Stack } from '@mui/material';
 import { format } from 'date-fns';
@@ -11,7 +11,7 @@ import IndexSelector from './components/IndexSelector';
 import DateRangeSelector from './components/DateRangeSelector';
 import PerformanceChart from './components/PerformanceChart';
 
-const API_URL = 'http://127.0.0.1:5001/api'; // Your Flask backend URL
+const API_URL = '/api'; // Your Flask backend URL
 
 function App() {
   // State Variables
@@ -35,9 +35,9 @@ function App() {
       return;
     }
     if (startDate >= endDate) {
-        setError('Start date must be before end date.');
-        setChartData(null);
-        return;
+      setError('Start date must be before end date.');
+      setChartData(null);
+      return;
     }
 
     setLoading(true);
@@ -51,18 +51,16 @@ function App() {
         start_date: formatDate(startDate),
         end_date: formatDate(endDate),
       };
-      console.log("Fetching comparison with params:", params);
       const response = await axios.get(`${API_URL}/compare`, { params });
-      console.log("API Response:", response.data);
-      if(response.data && response.data.labels) {
-          setChartData({
-            ...response.data,
-            fund_name: selectedFund.schemeName
-          });
+      if (response.data && response.data.labels) {
+        setChartData({
+          ...response.data,
+          fund_name: selectedFund.schemeName
+        });
       } else if (response.data && response.data.error) {
-          setError(response.data.error);
+        setError(response.data.error);
       } else {
-          setError('Received unexpected data format from server.');
+        setError('Received unexpected data format from server.');
       }
     } catch (err) {
       console.error("Error fetching comparison data:", err);
@@ -84,39 +82,38 @@ function App() {
 
   // Reset function
   const handleReset = () => {
-      setSelectedFund(null);
-      setSelectedIndex('');
-      setStartDate(subYears(new Date(), 1));
-      setEndDate(new Date());
-      setChartData(null);
-      setError(null);
-      setLoading(false);
+    setSelectedFund(null);
+    setSelectedIndex('');
+    setStartDate(subYears(new Date(), 1));
+    setEndDate(new Date());
+    setChartData(null);
+    setError(null);
+    setLoading(false);
   };
 
   return (
     <React.Fragment>
-      <CssBaseline /> { /* Material UI Baseline */}
+      <CssBaseline />
       <Header />
-      <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}> {/* Main content container */}
-        <Typography variant="h5" gutterBottom>
-            Performance Comparison
+      <Container maxWidth="sm" sx={{ mt: 4, mb: 4 }}>
+        <Typography variant="h5" gutterBottom sx={{ textAlign: 'center' }}>
+          Performance Comparison
         </Typography>
 
-        {/* Input Controls Section */}
-        <Grid container spacing={3} sx={{ mb: 3 }} alignItems="flex-start"> {/* Use Grid for layout */}
-          <Grid item xs={12} md={4}> {/* Fund Selector */}
+        <Grid container spacing={3} sx={{ mb: 3 }} alignItems="flex-start">
+          <Grid item xs={12} sm={4}>
             <FundSelector
               selectedFund={selectedFund}
               onFundChange={setSelectedFund}
             />
           </Grid>
-          <Grid item xs={12} md={4}> {/* Index Selector */}
+          <Grid item xs={12} sm={4}>
             <IndexSelector
               selectedIndex={selectedIndex}
               onIndexChange={setSelectedIndex}
             />
           </Grid>
-          <Grid item xs={12} md={4}> {/* Date Range Selector - Takes more space potentially */}
+          <Grid item xs={12} sm={4}>
             <DateRangeSelector
               startDate={startDate}
               endDate={endDate}
@@ -127,44 +124,37 @@ function App() {
           </Grid>
         </Grid>
 
-        {/* Action Buttons */}
         <Stack direction="row" spacing={2} justifyContent="center" sx={{ mb: 3 }}>
-            <Button
-                variant="contained"
-                color="primary"
-                onClick={fetchComparisonData}
-                disabled={loading || !selectedFund || !selectedIndex || !startDate || !endDate}
-            >
-                {loading ? <CircularProgress size={24} color="inherit" /> : 'Compare'}
-            </Button>
-             <Button variant="outlined" onClick={handleReset} disabled={loading}>
-                Reset
-            </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={fetchComparisonData}
+            disabled={loading || !selectedFund || !selectedIndex || !startDate || !endDate}
+            fullWidth
+          >
+            {loading ? <CircularProgress size={24} color="inherit" /> : 'Compare'}
+          </Button>
+          <Button variant="outlined" onClick={handleReset} disabled={loading} fullWidth>
+            Reset
+          </Button>
         </Stack>
 
-        {/* Display Area: Error Alert or Chart */}
-        <Box sx={{ minHeight: '450px' }}> {/* Container for chart/loading/error */}
+        <Box sx={{ minHeight: '450px' }}>
           {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
-
           {loading && !error && (
             <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '400px' }}>
               <CircularProgress />
               <Typography sx={{ ml: 2 }}>Loading chart data...</Typography>
             </Box>
           )}
-
-          {!loading && (
-            <PerformanceChart chartData={chartData} />
-          )}
+          {!loading && <PerformanceChart chartData={chartData} />}
         </Box>
 
-        {/* Footer Section (Optional) */}
         <Box sx={{ mt: 4, pt: 2, borderTop: '1px solid #eee', textAlign: 'center' }}>
           <Typography variant="caption" color="textSecondary">
             Data Sources: MF NAVs from MFAPI.in, Index data via NSEpy. For illustrative purposes only.
           </Typography>
         </Box>
-
       </Container>
     </React.Fragment>
   );

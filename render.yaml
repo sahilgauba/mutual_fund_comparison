@@ -1,13 +1,19 @@
 services:
   - type: web
+    plan: free
     name: mutual-fund-analyzer-api
-    env: python
+    runtime: python
     buildCommand: |
-      cd frontend && npm install && npm run build &&
-      pip install -r backend/requirements.txt
-    startCommand: cd backend && gunicorn app:app
+      cd frontend
+      npm install
+      npm run build
+      cd ../backend
+      pip install -r requirements.txt
+    startCommand: gunicorn backend.app:app
     envVars:
+      - key: NODE_VERSION
+        value: 23.11.0
       - key: PYTHON_VERSION
-        value: 3.8.0
+        value: 3.9.13
       - key: FLASK_ENV
         value: production 

@@ -1,8 +1,10 @@
-Flask==2.0.1
-Flask-CORS==3.0.10
-Werkzeug==2.0.3
-yfinance==0.2.36
-pandas==2.2.2
-gunicorn==20.1.0
-numpy==1.26.4 
+Flask==3.1.0
+flask_cors==5.0.1
+pandas==2.2.3
+Requests==2.32.3
+Werkzeug==3.1.3
+yfinance==0.2.55
+pandas==2.2.3
+gunicorn==23.0.0
+numpy==2.0.2
 # nsepy # Removing nsepy as it seems unreliable 

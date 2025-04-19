@@ -35,6 +35,8 @@ yarn-error.log*
 out/
 .DS_Store
 *.pem
+**/build/
+yfinance_cache/
 
 # IDE
 .idea/

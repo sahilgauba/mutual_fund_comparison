@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { Line } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
@@ -12,12 +12,11 @@ import {
   Filler,
   TimeScale,
 } from 'chart.js';
-import 'chartjs-adapter-date-fns';
 import zoomPlugin from 'chartjs-plugin-zoom';
 import { Box, Typography, ToggleButton, ToggleButtonGroup, Button, Stack, Tooltip as MuiTooltip, useTheme } from '@mui/material';
 import DownloadIcon from '@mui/icons-material/Download';
 import ZoomOutMapIcon from '@mui/icons-material/ZoomOutMap';
-import { format, parseISO, differenceInDays, differenceInYears } from 'date-fns';
+import { format, parseISO, differenceInDays } from 'date-fns';
 import annotationPlugin from 'chartjs-plugin-annotation';
 
 // Register Chart.js components
@@ -48,11 +47,11 @@ const PerformanceChart = ({ chartData }) => {
 
   if (!chartData || !chartData.labels || chartData.labels.length === 0) {
     return (
-      <Box sx={{ 
-        mt: 4, 
-        p: 3, 
-        textAlign: 'center', 
-        border: '1px dashed rgba(0, 0, 0, 0.12)', 
+      <Box sx={{
+        mt: 4,
+        p: 3,
+        textAlign: 'center',
+        border: '1px dashed rgba(0, 0, 0, 0.12)',
         borderRadius: '8px',
         bgcolor: 'rgba(0, 0, 0, 0.02)',
         transition: 'all 0.3s ease'
@@ -107,16 +106,16 @@ const PerformanceChart = ({ chartData }) => {
       // Convert dates to Date objects if they're strings
       const start = typeof startDate === 'string' ? parseISO(startDate) : startDate;
       const current = typeof currentDate === 'string' ? parseISO(currentDate) : currentDate;
-      
+
       // Calculate years between dates (including fractional years)
       const years = differenceInDays(current, start) / 365;
-      
+
       if (years === 0 || initialValue === 0) return 0;
 
       // XIRR formula: (FV/PV)^(1/t) - 1
       // Where FV = Final Value, PV = Present Value, t = time in years
       const xirr = (Math.pow(currentValue / initialValue, 1 / years) - 1) * 100;
-      
+
       return xirr;
     } catch (error) {
       console.error('Error calculating XIRR:', error);
@@ -158,13 +157,13 @@ const PerformanceChart = ({ chartData }) => {
 
     // Prepare data rows
     const dataRows = chartData.labels.map((date, index) => {
-      const fundValue = valueType === 'normalized' 
-        ? chartData.fund_performance[index] 
+      const fundValue = valueType === 'normalized'
+        ? chartData.fund_performance[index]
         : chartData.fund_actual_values[index];
       const indexValue = valueType === 'normalized'
         ? chartData.index_performance[index]
         : chartData.index_actual_values[index];
-      
+
       // Calculate performance relative to first day
       const fundPerf = calculatePerformance(fundValue, chartData.fund_performance[0]);
       const indexPerf = calculatePerformance(indexValue, chartData.index_performance[0]);
@@ -200,7 +199,7 @@ const PerformanceChart = ({ chartData }) => {
     const filename = `${chartData.fund_name || 'fund'}_performance_${valueType}_${timestamp}.csv`
       .replace(/[^a-z0-9_-]/gi, '_')
       .toLowerCase();
-    
+
     link.setAttribute('href', url);
     link.setAttribute('download', filename);
     document.body.appendChild(link);
@@ -331,9 +330,9 @@ const PerformanceChart = ({ chartData }) => {
             const initialValue = context.dataset.data[0];
             const startDate = chartData.labels[0];
             const currentDate = chartData.labels[context.dataIndex];
-            
+
             const xirr = calculateXIRR(value, initialValue, startDate, currentDate);
-            
+
             return [
               `${datasetLabel}: ${formatNumber(value)}`,
               `XIRR: ${formatXIRR(xirr)}`
@@ -524,11 +523,11 @@ const PerformanceChart = ({ chartData }) => {
 
   return (
     <Box sx={{ width: '100%', mt: 2 }}>
-      <Stack 
-        direction="row" 
-        spacing={2} 
-        alignItems="center" 
-        justifyContent="space-between" 
+      <Stack
+        direction="row"
+        spacing={2}
+        alignItems="center"
+        justifyContent="space-between"
         sx={{ mb: 2 }}
       >
         <ToggleButtonGroup
@@ -550,7 +549,7 @@ const PerformanceChart = ({ chartData }) => {
             Actual Value
           </ToggleButton>
         </ToggleButtonGroup>
-        
+
         <Stack direction="row" spacing={1}>
           <MuiTooltip title="Reset Zoom">
             <Button
@@ -577,8 +576,8 @@ const PerformanceChart = ({ chartData }) => {
         </Stack>
       </Stack>
 
-      <Box sx={{ 
-        height: 500, 
+      <Box sx={{
+        height: 500,
         bgcolor: '#fff',
         p: 2,
         borderRadius: 1,

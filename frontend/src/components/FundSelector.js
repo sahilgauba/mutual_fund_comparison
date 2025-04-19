@@ -3,13 +3,13 @@ import axios from 'axios';
 import { Autocomplete, TextField, CircularProgress, Box } from '@mui/material';
 import debounce from 'lodash/debounce';
 
-const API_URL = 'http://127.0.0.1:5001/api'; // Your Flask backend URL
+const API_URL = '/api'; // Your Flask backend URL
 
 const FundSelector = ({ selectedFund, onFundChange }) => {
   const [open, setOpen] = useState(false);
   const [options, setOptions] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [inputValue, setInputValue] = useState('');
+  // const [inputValue, setInputValue] = useState('');
   const [error, setError] = useState(null);
 
   // Debounced search function
@@ -51,11 +51,11 @@ const FundSelector = ({ selectedFund, onFundChange }) => {
   return (
     <Autocomplete
       id="fund-selector"
-      sx={{ 
+      sx={{
         width: { xs: '100%', sm: 450 }, // Responsive width
         mb: 2,
         '& .MuiOutlinedInput-root': { // Add slight elevation/shadow
-            boxShadow: '0 1px 2px rgba(0,0,0,0.05)',
+          boxShadow: '0 1px 2px rgba(0,0,0,0.05)',
         }
       }}
       open={open}
@@ -70,7 +70,7 @@ const FundSelector = ({ selectedFund, onFundChange }) => {
         onFundChange(newValue);
       }}
       onInputChange={(event, newInputValue) => {
-        setInputValue(newInputValue);
+        // setInputValue(newInputValue);
         debouncedSearch(newInputValue);
       }}
       filterOptions={(x) => x} // Disable built-in filtering as we're using server-side search

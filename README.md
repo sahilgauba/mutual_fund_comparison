@@ -59,9 +59,13 @@ pip install -r requirements.txt
 
 4. Start the Flask server:
 ```bash
-python app.py
+python -m backend.app
+# on linux
+# gunicorn backend.app:app --bind 0.0.0.0:5001 --reload
 ```
-The backend server will run on `http://localhost:5000`
+The backend server will run on `http://localhost:5001`
+
+
 
 ### Frontend Setup
 
@@ -77,9 +81,8 @@ npm install
 
 3. Start the development server:
 ```bash
-npm start
+npm run build
 ```
-The frontend will automatically open in your browser at `http://localhost:3000`
 
 ## Dependencies
 
